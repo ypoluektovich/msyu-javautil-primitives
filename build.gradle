@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id "com.jfrog.bintray" version "1.6"
+}
+
+ext.pkgname = 'msyu-javautil-primitives'
+group = 'org.msyu.javautil'
+version = '0.1.0'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testCompile 'org.testng:testng:6.9.+'
+}
+
+test {
+    useTestNG()
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+}
+
+publishing {
+    publications {
+        main(MavenPublication) {
+            from components.java
+            artifactId pkgname
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}
+
+bintray {
+    user = project.properties.get('bintrayUser')
+    key = project.properties.get('bintrayApiKey')
+    publications = ['main']
+    dryRun = false
+    publish = false
+    pkg {
+        repo = 'msyu'
+        name = pkgname
+        desc = 'Utilities related to Java primitive types'
+        websiteUrl = 'https://github.com/ypoluektovich/msyu-javautil-primitives'
+        issueTrackerUrl = 'https://github.com/ypoluektovich/msyu-javautil-primitives/issues'
+        vcsUrl = 'https://github.com/ypoluektovich/msyu-javautil-primitives.git'
+        licenses = ['MPL-2.0']
+        publicDownloadNumbers = true
+        version {
+            name = project.version
+            vcsTag = 'v' + project.version
+        }
+    }
+}
